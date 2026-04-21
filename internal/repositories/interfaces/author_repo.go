@@ -1,9 +1,11 @@
 package interfaces
 
+import "github.com/phuongtran6575/bookstore-be.git/internal/models"
+
 type AuthorRepository interface {
-	GetAuthors()
-	GetAuthorByID()
-	CreateAuthor()
-	UpdateAuthor()
-	DeleteAuthor()
+	GetAuthors() []models.Author
+	GetAuthorByID(id uint) models.Author
+	CreateAuthor(author models.Author)
+	UpdateAuthor(author models.Author)
+	DeleteAuthor(id uint)
 }

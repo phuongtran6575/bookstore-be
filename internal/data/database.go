@@ -24,11 +24,11 @@ func InitDB() *gorm.DB {
 	user := os.Getenv("DB_USER")
 	password := os.Getenv("DB_PASSWORD")
 	dbname := os.Getenv("DB_NAME")
-	sslmode := os.Getenv("DB_SSLMODE")
-	timezone := os.Getenv("DB_TIMEZONE")
+	//sslmode := os.Getenv("DB_SSLMODE")
+	//timezone := os.Getenv("DB_TIMEZONE")
 
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
-		host, user, password, dbname, port, sslmode, timezone)
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Ho_Chi_Minh",
+		host, user, password, dbname, port)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -37,18 +37,79 @@ func InitDB() *gorm.DB {
 
 	// Auto Migration
 	db.AutoMigrate(
+		// Catalog
+		&models.ProductType{},
 		&models.Product{},
+		&models.ProductImage{},
 		&models.Category{},
+		&models.ProductCategory{},
 		&models.Author{},
+		&models.ProductAuthor{},
+		&models.AttributeDefinition{},
+		&models.AttributeSelectOption{},
+		&models.ProductAttributeValue{},
+		&models.VariantOptionType{},
+		&models.VariantOptionValue{},
+		&models.ProductVariant{},
+		&models.VariantOptionAssignment{},
+		&models.Bundle{},
+		&models.BundleItem{},
+
+		// Users
 		&models.User{},
 		&models.Address{},
+		&models.UserSession{},
+		&models.Cart{},
+		&models.CartItem{},
+		&models.Wishlist{},
+
+		// Orders
 		&models.Order{},
 		&models.OrderItem{},
+		&models.OrderStatusLog{},
+
+		// Payments
+		&models.PaymentMethod{},
+		&models.Payment{},
+		&models.Refund{},
+		&models.StoreWallet{},
+		&models.WalletTransaction{},
+
+		// Shipping
+		&models.Carrier{},
+		&models.ShippingMethod{},
+		&models.ShippingZone{},
+		&models.ShippingRate{},
+		&models.Shipment{},
+		&models.ShipmentTrackingEvent{},
+
+		// Promotions
+		&models.Coupon{},
+		&models.CouponUsage{},
+
+		// Reviews
+		&models.Review{},
+		&models.ReviewImage{},
+		&models.ReviewHelpful{},
+
+		// Inventory & Loyalty
+		&models.LoyaltyAccount{},
+		&models.LoyaltyTransaction{},
+		&models.StoreLocation{},
+		&models.LocationInventory{},
+		&models.InventoryLog{},
+
+		// RBAC
 		&models.Admin{},
 		&models.Role{},
 		&models.Permission{},
 		&models.AdminRole{},
 		&models.RolePermission{},
+
+		// System
+		&models.AuditLog{},
+		&models.Notification{},
+		&models.Setting{},
 	)
 
 	DB = db
