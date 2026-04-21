@@ -6,6 +6,27 @@ import (
 	"gorm.io/datatypes"
 )
 
+type ShippingMethodType string
+
+const (
+	ShipTypeStandard     ShippingMethodType = "standard"
+	ShipTypeExpress      ShippingMethodType = "express"
+	ShipTypeSameDay      ShippingMethodType = "same_day"
+	ShipTypePickupInStore ShippingMethodType = "pickup_in_store"
+)
+
+type ShipmentStatus string
+
+const (
+	ShipmentPending         ShipmentStatus = "pending"
+	ShipmentPickedUp        ShipmentStatus = "picked_up"
+	ShipmentInTransit       ShipmentStatus = "in_transit"
+	ShipmentOutForDelivery  ShipmentStatus = "out_for_delivery"
+	ShipmentDelivered       ShipmentStatus = "delivered"
+	ShipmentFailed          ShipmentStatus = "failed"
+	ShipmentReturned        ShipmentStatus = "returned"
+)
+
 type Carrier struct {
 	ID                  uint           `gorm:"primaryKey" json:"id"`
 	Code                string         `gorm:"size:50;uniqueIndex;not null" json:"code"` // ghn, ghtk, vtp, vnpost, grab_express
@@ -24,10 +45,10 @@ type ShippingMethod struct {
 	ID           uint      `gorm:"primaryKey" json:"id"`
 	CarrierID    uint      `gorm:"not null" json:"carrier_id"`
 	Carrier      Carrier   `gorm:"foreignKey:CarrierID" json:"carrier"`
-	Code         string    `gorm:"size:100;uniqueIndex;not null" json:"code"`
-	Name         string    `gorm:"size:200;not null" json:"name"`
-	Type         string    `gorm:"type:varchar(50);not null" json:"type"` // standard, express, same_day, pickup_in_store
-	MinDays      *int      `json:"min_days"`
+	Code         string             `gorm:"size:100;uniqueIndex;not null" json:"code"`
+	Name         string             `gorm:"size:200;not null" json:"name"`
+	Type         ShippingMethodType `gorm:"type:varchar(50);not null" json:"type"` // standard, express, same_day, pickup_in_store
+	MinDays      *int               `json:"min_days"`
 	MaxDays      *int      `json:"max_days"`
 	MaxWeightKG  *float64  `gorm:"type:decimal(6,2)" json:"max_weight_kg"`
 	IsActive     bool      `gorm:"not null;default:true" json:"is_active"`
@@ -67,7 +88,7 @@ type Shipment struct {
 	TrackingCode        string         `gorm:"size:200;uniqueIndex" json:"tracking_code"`
 	ShippingFeeCharged  float64        `gorm:"type:decimal(10,2);not null" json:"shipping_fee_charged"`
 	WeightG             *int           `json:"weight_g"`
-	Status              string         `gorm:"type:varchar(50);not null" json:"status"` // pending, picked_up, in_transit, out_for_delivery, delivered, failed, returned
+	Status              ShipmentStatus `gorm:"type:varchar(50);not null" json:"status"` // pending, picked_up, in_transit, out_for_delivery, delivered, failed, returned
 	CarrierStatusRaw    datatypes.JSON `json:"carrier_status_raw"`
 	ShippedAt           *time.Time     `json:"shipped_at"`
 	DeliveredAt         *time.Time     `json:"delivered_at"`

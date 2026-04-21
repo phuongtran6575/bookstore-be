@@ -4,6 +4,24 @@ import (
 	"time"
 )
 
+type AttributeDataType string
+
+const (
+	AttrTypeText    AttributeDataType = "text"
+	AttrTypeNumber  AttributeDataType = "number"
+	AttrTypeBoolean AttributeDataType = "boolean"
+	AttrTypeSelect  AttributeDataType = "select"
+)
+
+type ProductAuthorRole string
+
+const (
+	RoleMainAuthor ProductAuthorRole = "main_author"
+	RoleTranslator ProductAuthorRole = "translator"
+	RoleEditor     ProductAuthorRole = "editor"
+	RoleIllustrator ProductAuthorRole = "illustrator"
+)
+
 type ProductType struct {
 	ID          uint      `gorm:"primaryKey" json:"id"`
 	Name        string    `gorm:"size:100;not null" json:"name"`
@@ -72,10 +90,10 @@ type Author struct {
 type AttributeDefinition struct {
 	ID            uint      `gorm:"primaryKey" json:"id"`
 	ProductTypeID uint      `gorm:"not null" json:"product_type_id"`
-	Name          string    `gorm:"size:200;not null" json:"name"`
-	Key           string    `gorm:"size:100;not null" json:"key"`
-	DataType      string    `gorm:"type:varchar(20);not null" json:"data_type"` // text, number, boolean, select
-	Unit          string    `gorm:"size:50" json:"unit"`
+	Name          string            `gorm:"size:200;not null" json:"name"`
+	Key           string            `gorm:"size:100;not null" json:"key"`
+	DataType      AttributeDataType `gorm:"type:varchar(20);not null" json:"data_type"` // text, number, boolean, select
+	Unit          string            `gorm:"size:50" json:"unit"`
 	IsRequired    bool      `gorm:"not null;default:false" json:"is_required"`
 	IsFilterable  bool      `gorm:"not null;default:false" json:"is_filterable"`
 	SortOrder     int       `json:"sort_order"`
@@ -161,10 +179,10 @@ type ProductCategory struct {
 }
 
 type ProductAuthor struct {
-	ProductID uint   `gorm:"primaryKey"`
-	AuthorID  uint   `gorm:"primaryKey"`
-	Role      string `gorm:"type:varchar(50);not null"` // main_author, translator, editor, illustrator
-	SortOrder int8   `json:"sort_order"`
+	ProductID uint              `gorm:"primaryKey"`
+	AuthorID  uint              `gorm:"primaryKey"`
+	Role      ProductAuthorRole `gorm:"type:varchar(50);not null"` // main_author, translator, editor, illustrator
+	SortOrder int8              `json:"sort_order"`
 }
 
 type VariantOptionAssignment struct {

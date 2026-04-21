@@ -6,9 +6,18 @@ import (
 	"gorm.io/datatypes"
 )
 
+type SettingType string
+
+const (
+	SettingTypeString  SettingType = "string"
+	SettingTypeNumber  SettingType = "number"
+	SettingTypeBoolean SettingType = "boolean"
+	SettingTypeJSON    SettingType = "json"
+)
+
 type AuditLog struct {
 	ID         uint64         `gorm:"primaryKey" json:"id"`
-	ActorType  string         `gorm:"type:varchar(20);not null" json:"actor_type"` // user, admin, system
+	ActorType  ActorType      `gorm:"type:varchar(20);not null" json:"actor_type"` // user, admin, system
 	ActorID    *uint          `json:"actor_id"`
 	Action     string         `gorm:"size:200;not null" json:"action"`
 	TargetType string         `gorm:"size:100;not null" json:"target_type"`
@@ -32,10 +41,10 @@ type Notification struct {
 }
 
 type Setting struct {
-	Key         string    `gorm:"primaryKey;size:200" json:"key"`
-	Value       string    `gorm:"type:text;not null" json:"value"`
-	Type        string    `gorm:"type:varchar(20);not null" json:"type"` // string, number, boolean, json
-	Description string    `gorm:"type:text" json:"description"`
-	UpdatedBy   *uint     `json:"updated_by"`
-	UpdatedAt   time.Time `gorm:"autoUpdateTime" json:"updated_at"`
+	Key         string      `gorm:"primaryKey;size:200" json:"key"`
+	Value       string      `gorm:"type:text;not null" json:"value"`
+	Type        SettingType `gorm:"type:varchar(20);not null" json:"type"` // string, number, boolean, json
+	Description string      `gorm:"type:text" json:"description"`
+	UpdatedBy   *uint       `json:"updated_by"`
+	UpdatedAt   time.Time   `gorm:"autoUpdateTime" json:"updated_at"`
 }

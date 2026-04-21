@@ -6,12 +6,24 @@ import (
 	"gorm.io/datatypes"
 )
 
+type OrderStatus string
+
+const (
+	OrderPending    OrderStatus = "pending"
+	OrderConfirmed  OrderStatus = "confirmed"
+	OrderProcessing OrderStatus = "processing"
+	OrderShipped    OrderStatus = "shipped"
+	OrderDelivered  OrderStatus = "delivered"
+	OrderCancelled  OrderStatus = "cancelled"
+	OrderRefunded   OrderStatus = "refunded"
+)
+
 type Order struct {
 	ID             uint             `gorm:"primaryKey" json:"id"`
 	UserID         uint             `gorm:"not null" json:"user_id"`
 	AddressID      uint             `gorm:"not null" json:"address_id"`
 	OrderCode      string           `gorm:"size:50;uniqueIndex;not null" json:"order_code"`
-	Status         string           `gorm:"type:varchar(50);not null" json:"status"` // pending, confirmed, processing, shipped, delivered, cancelled, refunded
+	Status         OrderStatus      `gorm:"type:varchar(50);not null" json:"status"` // pending, confirmed, processing, shipped, delivered, cancelled, refunded
 	Subtotal       float64          `gorm:"type:decimal(12,2);not null" json:"subtotal"`
 	DiscountAmount float64          `gorm:"type:decimal(12,2);not null;default:0" json:"discount_amount"`
 	ShippingFee    float64          `gorm:"type:decimal(12,2);not null" json:"shipping_fee"`
@@ -35,12 +47,12 @@ type OrderItem struct {
 }
 
 type OrderStatusLog struct {
-	ID            uint      `gorm:"primaryKey" json:"id"`
-	OrderID       uint      `gorm:"not null" json:"order_id"`
-	FromStatus    *string   `gorm:"type:varchar(50)" json:"from_status"`
-	ToStatus      string    `gorm:"type:varchar(50);not null" json:"to_status"`
-	ChangedByType string    `gorm:"type:varchar(20);not null" json:"changed_by_type"` // user, admin, system
-	ChangedByID   uint      `gorm:"not null" json:"changed_by_id"`
-	Note          string    `gorm:"type:text" json:"note"`
-	ChangedAt     time.Time `gorm:"not null;autoCreateTime" json:"changed_at"`
+	ID            uint        `gorm:"primaryKey" json:"id"`
+	OrderID       uint        `gorm:"not null" json:"order_id"`
+	FromStatus    *OrderStatus `gorm:"type:varchar(50)" json:"from_status"`
+	ToStatus      OrderStatus  `gorm:"type:varchar(50);not null" json:"to_status"`
+	ChangedByType ActorType    `gorm:"type:varchar(20);not null" json:"changed_by_type"` // user, admin, system
+	ChangedByID   uint        `gorm:"not null" json:"changed_by_id"`
+	Note          string      `gorm:"type:text" json:"note"`
+	ChangedAt     time.Time   `gorm:"not null;autoCreateTime" json:"changed_at"`
 }

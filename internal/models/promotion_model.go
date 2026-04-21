@@ -4,12 +4,19 @@ import (
 	"time"
 )
 
+type CouponType string
+
+const (
+	CouponTypePercent CouponType = "percent"
+	CouponTypeFixed   CouponType = "fixed"
+)
+
 type Coupon struct {
-	ID                uint      `gorm:"primaryKey" json:"id"`
-	Code              string    `gorm:"size:50;uniqueIndex;not null" json:"code"`
-	Description       string    `gorm:"type:text" json:"description"`
-	Type              string    `gorm:"type:varchar(20);not null" json:"type"` // percent, fixed
-	Value             float64   `gorm:"type:decimal(10,2);not null" json:"value"`
+	ID                uint       `gorm:"primaryKey" json:"id"`
+	Code              string     `gorm:"size:50;uniqueIndex;not null" json:"code"`
+	Description       string     `gorm:"type:text" json:"description"`
+	Type              CouponType `gorm:"type:varchar(20);not null" json:"type"` // percent, fixed
+	Value             float64    `gorm:"type:decimal(10,2);not null" json:"value"`
 	MinOrderValue     *float64  `gorm:"type:decimal(12,2)" json:"min_order_value"`
 	MaxDiscountAmount *float64  `gorm:"type:decimal(12,2)" json:"max_discount_amount"`
 	MaxUses           *int      `json:"max_uses"`
